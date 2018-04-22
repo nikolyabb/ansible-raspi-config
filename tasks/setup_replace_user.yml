@@ -3,9 +3,9 @@
 - name: Create user {{ raspi_config_replace_user['name'] }}
   user:
     name: "{{ raspi_config_replace_user['name'] }}"
-  changed_when: True #to force handler call
-  notify:
-    - remove default user
+    group: "{{ raspi_config_replace_user['name'] }}"
+    groups: "sudo"
+    state: present
 
 - name: Add your login key to {{ raspi_config_replace_user['name'] }}
   authorized_key:
@@ -15,5 +15,10 @@
 - name: Add {{ raspi_config_replace_user['name'] }} to sudoers
   lineinfile:
   args:
-    dest: /etc/sudoers
-    line: "{{ raspi_config_replace_user['name'] }} ALL=(ALL) NOPASSWD: ALL"
+    dest: "/etc/sudoers.d/{{ raspi_config_replace_user['name'] }}"
+    line:   "{{ raspi_config_replace_user['name'] }} ALL=(ALL) NOPASSWD: ALL"
+    state: present
+    create: yes
+    owner: root
+    group: root
+    mode: 640

@@ -15,13 +15,6 @@
     delay: "{{ raspi_config_reboot_min_time }}"
     timeout: "{{ raspi_config_reboot_max_wait_time }}"
 
-- name: remove default user
-  when: "raspi_config_replace_user['name'] != raspi_config_auth_test_username"
-  user: name={{raspi_config_auth_test_username}} state=absent force=yes
-  async: 0
-  poll: 0
-  ignore_errors: True
-
 - name: restart timezone dependent services
   service:
     name: "{{ item }}"

@@ -14,6 +14,18 @@
 - import_tasks: setup_replace_user.yml
   when: raspi_config_replace_user['name'] != None
 
+- name: Verify if replace_user exists
+  stat:
+    path: "/etc/sudoers.d/{{ raspi_config_replace_user['name'] }}"
+  register: raspi_config_replace_user_exists
+
+- name: remove default user
+  when: "raspi_config_replace_user['name'] != None and raspi_config_replace_user_exists"
+  user: name={{raspi_config_auth_test_username}} state=absent force=yes
+  async: 0
+  poll: 0
+  ignore_errors: True
+
 - import_tasks: security_check.yml
 
 - name: ensure filesystem is resized
